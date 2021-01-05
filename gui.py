@@ -8,6 +8,7 @@ import functions
 class TextEditor:
     def __init__(self, master):
         self.file_select = None
+        self.file_content = None
 
         self.master = master
         self.master.title('Text Editor')
@@ -31,14 +32,13 @@ class TextEditor:
         self.toolmenu.add_command(label="Word count", command=self.word_count)
         self.menubar.add_cascade(label="Tools", menu=self.toolmenu)
 
-
-        self.txt_input = tk.scrolledtext.ScrolledText(self.master, font=("Carlito", 12))
+        self.txt_input = tk.scrolledtext.ScrolledText(self.master, font=("Consolas", 12))
         self.txt_input.pack(expand=True, fill=tk.BOTH)
 
         self.master.config(menu=self.menubar)
 
 TextEditor.new = functions.new
-TextEditor.open = functions.open
+TextEditor.open_f = functions.open_f
 TextEditor.open_alert = functions.open_alert
 TextEditor.close_alert = functions.close_alert
 TextEditor.delete_window = functions.delete_window
