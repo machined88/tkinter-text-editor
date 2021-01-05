@@ -8,37 +8,38 @@ def new(self):
         else:
             self.txt_input.delete("1.0", tk.END)
             self.file_select = None
+            self.file_content = None
             self.master.title(f"Text Editor")
 
-def open(self):
+def open_f(self):
     self.file_select = filedialog.askopenfile(filetypes=[("Python Files", '*.py'), ("Text Files", "*.txt")])
     if self.file_select != None:
         self.file_select_name = os.path.basename(self.file_select.name)
-        content = self.file_select.read()
+        self.file_content = self.file_select.read()
         self.master.title(f"{self.file_select_name} - Text Editor")
         self.txt_input.delete("1.0", tk.END)
-        self.txt_input.insert(tk.END, content)
+        self.txt_input.insert(tk.END, self.file_content)
 
 def open_alert(self):
     try:
         if len(self.txt_input.get("1.0", tk.END)) > 1:
-            if self.file_select.read() != self.txt_input.get("1.0", tk.END):
+            if self.file_content != self.txt_input.get("1.0", tk.END)[:-1]:
                 choice = messagebox.askyesno(title="Warning", message="Close this file without saving ?")
                 if not choice:
                     pass
                 else:
-                    self.open()
+                    self.open_f()
             else:
-                self.open()
+                self.open_f()
         else:
-            self.open()
+            self.open_f()
     except AttributeError:
-        self.open()
+        self.open_f()
 
 def close_alert(self):
     try:
         if len(self.txt_input.get("1.0", tk.END)) > 1:
-            if self.file_select.read() != self.txt_input.get("1.0", tk.END):
+            if self.file_content != self.txt_input.get("1.0", tk.END)[:-1]:
                 choice = messagebox.askyesno(title="Warning", message="Close this file without saving ?")
                 if not choice:
                     pass
@@ -62,7 +63,7 @@ def close_alert(self):
 def delete_window(self):
     try:
         if len(self.txt_input.get("1.0", tk.END)) > 1:
-            if self.file_select.read() != self.txt_input.get("1.0", tk.END):
+            if self.file_content != self.txt_input.get("1.0", tk.END)[:-1]:
                 choice = messagebox.askyesno(title="Warning", message="Close this file without saving ?")
                 if not choice:
                     pass
@@ -84,23 +85,25 @@ def delete_window(self):
             self.master.destroy()
     
 def save(self):
-    save_content = self.txt_input.get("1.0", tk.END)
-    if self.file_select != None:
-        with open(self.file_select.name, "r+") as f:
-            self.file_select = f
+    save_content = self.txt_input.get("1.0", tk.END)[:-1]
+    if self.file_select:
+        with open(self.file_select.name, 'w+') as f:
+            self.file_content = f.read()
             f.write(save_content)
             f.close()
+        with open(self.file_select.name, 'r+') as f:
+            self.file_content = f.read()
     else:
         self.save_as()
 
 def save_as(self):
-    self.file_select2 = filedialog.asksaveasfile(defaultextension=".txt", filetypes=[("All Files", "*"), ("Python Files", '*.py'), ("Text Files", "*.txt")])
+    self.file_select = filedialog.asksaveasfile(defaultextension=".txt", filetypes=[("All Files", "*"), ("Python Files", '*.py'), ("Text Files", "*.txt")])
     if self.file_select != None:
-        self.file_selectname = os.path.basename(self.file_select2.name)
-        save_content = self.txt_input.get("1.0", tk.END)
-        self.file_select2.write(save_content)
+        self.file_content = self.file_select.read()
+        self.file_selectname = os.path.basename(self.file_select.name)
+        save_content = self.txt_input.get("1.0", tk.END)[:-1]
+        self.file_select.write(save_content)
         self.file_select = open(self.file_select.name, "r+")
-        self.file_select2.close()
         self.master.title(f"{self.file_selectname} - Text Editor")
     else:
         pass
